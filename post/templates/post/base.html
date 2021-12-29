@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en" class="h-100">
+<head>
+    {% load imagekit %}
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block description %}
+    <meta name="description" content="">
+    {% endblock %}
+    <meta name="generator" content="Hugo 0.88.1">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <title>
+        {% block title %}
+        UkiBlog | Articles on all topics
+        {% endblock %}
+    </title>
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/cover/">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="/docs/5.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/docs/5.1/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="manifest" href="/docs/5.1/assets/img/favicons/manifest.json">
+    <link rel="mask-icon" href="/docs/5.1/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon.ico">
+    <meta name="theme-color" content="#7952b3">
+    <style>
+        body {
+            font-size: 18px;
+        }
+        h2 {
+            font-size: 24px;
+        }
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+    </style>
+    <link href="cover.css" rel="stylesheet">
+</head>
+<body class="d-flex h-100 bg-dark">
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <header class="mb-auto">
+        {% block navbar %}
+        <header class="p-3 bg-dark text-white">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                    <h1 class="me-4 pe-7">
+                        <a href="/" class="text-start text-decoration-none text-white">UkiBlog</a>
+                    </h1>
+
+                    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                        <li><a href="{% url 'post:base' %}" class="nav-link px-2 text-secondary">Home</a></li>
+                        <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
+                    </ul>
+
+                    <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+                        <input type="search" class="form-control form-control-dark" placeholder="Search..."
+                               aria-label="Search">
+                    </form>
+
+                    <div class="text-end">
+                        {% if request.user.is_authenticated %}
+                        <a href="#" class="text-decoration-none text-white text-start">
+                            <img src="{{ profile.avatar_thumbnail.url }}" alt="" width="32" height="32"
+                                 class="rounded-circle me-2">{{ profile.user.username }}
+                        </a>
+                        {% else %}
+                        <button type="button" class="btn btn-outline-light me-2">Login</button>
+                        <button type="button" class="btn btn-warning">Sign-up</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </header>
+        {% endblock %}
+        <br>
+        {% block main %}
+        <main class="px-3 text-dark" style="margin: 0 550px 0 450px;">
+            {% for post in posts %}
+            <div class="card text-center">
+                <div class="card-header">
+                    <a href="#" class="text-decoration-none text-dark" style="font-weight: 600">
+                        <img src="{{ post.author.avatar_thumbnail.url }}" alt="" width="32" height="32"
+                             class="rounded-circle me-2">{{ post.author.user.username }}
+                    </a>
+                    <span class="text-muted">
+                        {{ post.pub_date|date:"H:i d.m.Y" }}
+                    {% if post.pub_date != post.edit_date %}
+                    (ред.
+                    {% if post.pub_date|date:"d.m.Y" == post.edit_date|date:"d.m.Y" %}
+                    в {{ post.edit_date|date:"H:i" }}
+                    {% else %}
+                    {{ post.edit_date|date:"H:i d.m.Y" }}
+                    {% endif %}
+                    )
+                    {% endif %}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title"><a href="{{ post.get_absolute_url }}" class="text-decoration-none text-dark">
+                        {{ post.title }}</a></h2>
+                    <img src="{{ post.image_thumbnail.url }}" width=600px style="margin: 15px 0;">
+                    <p class="card-text text-dark">{{ post.description }}</p>
+                    <a href="{{ post.get_absolute_url }}" class="btn btn-primary">Читать далее</a>
+                </div>
+                <div class="card-footer text-muted">
+                    {% for tag in post.tags.all %}
+                        <span class="text-primary">#<a href="#" class="text-decoration-none text-dark me-1">{{ tag.name }}
+                        </a></span>
+                    {% endfor %}
+                </div>
+            </div>
+            <br>
+            {% endfor %}
+
+        </main>
+        {% endblock %}
+        {% block footer %}
+        <footer class="mt-auto text-white-50">
+            <p>Cover template for <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, by <a
+                    href="https://twitter.com/mdo" class="text-white">@mdo</a>.</p>
+        </footer>
+        {% endblock %}
+</div>
+</body>
+</html>
