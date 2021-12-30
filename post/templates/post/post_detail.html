@@ -38,12 +38,5 @@
                 {% endautoescape %}
             </div>
         </div>
-        <div class="card-footer text-muted">
-            {% for tag in post.tags.all %}
-            <span class="text-primary">#
-            <a href="#" class="text-decoration-none text-dark">{{ tag.name }}</a>
-        </span>
-            {% endfor %}
-        </div>
     </div>
     {% endblock %}
