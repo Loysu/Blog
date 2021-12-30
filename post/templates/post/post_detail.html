@@ -6,30 +6,30 @@
 <meta name="description" content="{{ post.description_for_search_engines }}">
 {% endblock %}
 {% block main %}
-<main class="px-3 text-dark  text-center" style="margin: 0 550px 0 450px;">
-    <div class="card" style="margin-bottom: 100px;">
+<main class="px-3 text-dark" style="margin-left: 450px; width: 900px;">
+    <div class="card text-center">
         <div class="card-header">
             <a href="#" class="text-decoration-none text-dark" style="font-weight: 600">
                 <img src="{{ post.author.avatar_thumbnail.url }}" alt="" width="32" height="32"
                      class="rounded-circle me-2">{{ post.author.user.username }}
             </a>
-
             <span class="text-muted">
-                            {{ post.pub_date|date:"H:i d.m.Y" }}
-                        {% if post.pub_date != post.edit_date %}
-                        (ред.
-                        {% if post.pub_date|date:"d.m.Y" == post.edit_date|date:"d.m.Y" %}
-                        в {{ post.edit_date|date:"H:i" }}
-                        {% else %}
-                        {{ post.edit_date|date:"H:i d.m.Y" }}
-                        {% endif %}
-                        )
-                        {% endif %}
-                        </span>
+                        {{ post.pub_date|date:"H:i d.m.Y" }}
+                    {% if post.pub_date != post.edit_date %}
+                    (ред.
+                    {% if post.pub_date|date:"d.m.Y" == post.edit_date|date:"d.m.Y" %}
+                    в {{ post.edit_date|date:"H:i" }}
+                    {% else %}
+                    {{ post.edit_date|date:"H:i d.m.Y" }}
+                    {% endif %}
+                    )
+                    {% endif %}
+                    </span>
         </div>
         <div class="card-body">
-            <h2 class="card-title"><a href="{{ post.get_absolute_url }}" class="text-decoration-none text-dark">
-                {{ post.title }}</a></h2>
+            <h2 class="card-title text-dark">
+                {{ post.title }}
+            </h2>
             <img src="{{ post.image_thumbnail.url }}" width=600px style="margin: 15px 0;">
             <hr>
             <div class="text-start">
@@ -38,12 +38,5 @@
                 {% endautoescape %}
             </div>
         </div>
-        <div class="card-footer text-muted">
-            {% for tag in post.tags.all %}
-            <span class="text-primary">#
-            <a href="#" class="text-decoration-none text-dark">{{ tag.name }}</a>
-        </span>
-            {% endfor %}
-        </div>
     </div>
-    {% endblock %}
+{% endblock %}
