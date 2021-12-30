@@ -60,6 +60,7 @@ class Tag(models.Model):
 class Profile(models.Model):
     """Профиль пользователя"""
     user = models.OneToOneField(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    email = models.EmailField(unique=True, verbose_name='Email', null=True)
     slug = models.SlugField(unique=True, blank=True)
     bio = models.CharField(max_length=511, verbose_name='Краткая информация об авторе', blank=True)
     avatar_thumbnail = ProcessedImageField(

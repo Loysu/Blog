@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'post.apps.PostConfig',
     'imagekit',
     'django_summernote',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,10 @@ STATIC_ROOT = Path.joinpath(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = Path.joinpath(BASE_DIR, 'media')
+
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
