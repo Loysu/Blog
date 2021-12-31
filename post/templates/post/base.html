@@ -50,6 +50,8 @@
         }
       }
 
+
+
     </style>
     <link href="cover.css" rel="stylesheet">
 </head>
@@ -65,7 +67,7 @@
                     </h1>
 
                     <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                        <li><a href="{% url 'post:base' %}" class="nav-link px-2 text-secondary">Home</a></li>
+                        <li><a href="{% url 'post:logout' %}" class="nav-link px-2 text-secondary">Home</a></li>
                         <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
                     </ul>
 
@@ -84,12 +86,23 @@
                         <a href="{% url 'post:login' %}" class="text-decoration-none">
                             <button type="button" class="btn btn-outline-light me-2">Login</button>
                         </a>
-                        <button type="button" class="btn btn-warning">Sign-up</button>
+                        <a href="{% url 'post:registration' %}" class="text-decoration-none">
+                            <button type="button" class="btn btn-warning">Sign-up</button>
+                        </a>
                         {% endif %}
                     </div>
                 </div>
             </div>
         </header>
+        {% if messages %}
+        <br>
+        {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert"
+             style="margin-left: 450px; width: 900px;">
+            <strong>{{ message }}</strong>
+        </div>
+        {% endfor %}
+        {% endif %}
         {% endblock %}
         <br>
         {% block categories %}
