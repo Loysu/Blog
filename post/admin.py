@@ -30,5 +30,6 @@ class TagAdmin(admin.ModelAdmin):
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     """Профиль пользователя"""
-    list_display = ('__str__',)
+    list_display = ('__str__', 'author')
+    list_editable = ('author',)
     admin_thumbnail = AdminThumbnail(image_field='avatar_thumbnail')

@@ -1,0 +1,100 @@
+{% extends 'post/base.html' %}
+{% block title %}
+{{ profile.user.username }} | Ukiblog
+{% endblock %}
+{% block categories %}
+{% endblock %}
+{% block main %}
+<div class="card" style="width: 800px; margin: 100px 600px 300px 500px; padding: 30px 30px">
+    <div class="card-body">
+        <span class="text-start fs-1">
+            <img src="{{ profile.avatar_thumbnail.url }}" alt="" width="100" height="100" class="rounded-circle me-2">
+            <a class="ms-2 text-decoration-none">@{{ profile.user.username }}</a>
+            {% if user == profile.user %}
+            <a class="text-decoration-none">
+                <button type="button" class="btn btn-outline-primary btn-lg" style="margin-left: 200px">
+                    Настройки профиля
+                </button>
+            </a>
+            {% endif %}
+        </span>
+        <hr>
+        <p class="text-secondary fs-5 text-center"><strong>Профиль</strong></p>
+        <hr>
+        <br>
+        <table class="table table-striped fs-5" style="width: 705px">
+            <tbody>
+            <tr>
+                <th scope="row">Настоящее имя</th>
+                {% if profile.user.first_name %}
+                <td>{{ profile.user.first_name }}</td>
+                {% else %}
+                <td>&mdash;</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <th scope="row">Настоящая фамилия</th>
+                {% if profile.user.last_name %}
+                <td>{{ profile.user.last_name }}</td>
+                {% else %}
+                <td>&mdash;</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <th scope="row">Email</th>
+                <td>{{ profile.user.email }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Статус</th>
+                <td>
+                    {% if profile.author %}
+                    Автор
+                    {% else %}
+                    Читатель
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p class="fs-5"><strong class="text-secondary">Информация о пользователе:</strong>
+        {% if profile.bio %}
+        {{ profile.bio }}
+        {% else %}
+        отсутствует
+        {% endif %}
+        </p>
+        <br>
+        <hr>
+        <p class="text-secondary fs-5 text-center"><strong>Публикации</strong></p>
+        <hr>
+        <br>
+        {% if articles %}
+        {% for article in articles %}
+        <ul class="list-group">
+            <li class="list-group-item">
+                <a href="{{ article.get_absolute_url }}" class="text-decoration-none">{{ article.title }}</a>
+            </li>
+        </ul>
+        {% endfor %}
+        {% else %}
+        <p class="text-center fs-3 text-secondary">Вы не опубликовали ни одну статью :(</p>
+        {% endif %}
+        {% if user == profile.user %}
+        {% if profile.author %}
+        <button type="button" class="btn btn-outline-primary btn-lg mt-5" style="margin-left: 200px">
+            <a href="#" class="text-center text-decoration-none text-dark fs-5 mt-3">
+                Опубликовать новую статью
+            </a>
+        </button>
+        {% else %}
+        <button type="button" class="btn btn-outline-primary btn-lg mt-5" style="margin-left: 240px">
+            <a href="#" class="text-center text-decoration-none text-dark fs-5 mt-3">
+                Как стать автором?
+            </a>
+        </button>
+        {% endif %}
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

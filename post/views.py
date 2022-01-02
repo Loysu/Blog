@@ -91,7 +91,6 @@ class RegistrationView(View):
             new_user.save()
             Profile.objects.create(
                 user=new_user,
-                email=form.cleaned_data['email'],
                 slug=slugify(new_user.username)
             )
             user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
@@ -105,3 +104,15 @@ class RegistrationView(View):
             'form': form,
         }
         return render(self.request, 'post/registration.html', context)
+
+
+class ProfileView(DetailView):
+    """Подробная информация о пользователе"""
+    model = Profile
+    template_name_suffix = ''
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['articles'] = Profile.objects.get(user=context['profile'].user).post_set.order_by('pub_date')
+        return context
