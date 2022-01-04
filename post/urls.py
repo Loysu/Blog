@@ -8,7 +8,8 @@ from .views import (
     TagDetailView,
     LoginView,
     RegistrationView,
-    ProfileView
+    ProfileView,
+    EditProfileView,
 )
 
 app_name = 'post'
@@ -20,4 +21,5 @@ urlpatterns = [
     path('logout', LogoutView.as_view(next_page=reverse_lazy('post:base')), name='logout'),
     path('registration', RegistrationView.as_view(), name='registration'),
     path('profile/<slug:slug>', ProfileView.as_view(), name='profile'),
+    path('profile/<slug:slug>/edit', EditProfileView.as_view(), name='edit_profile'),
 ]

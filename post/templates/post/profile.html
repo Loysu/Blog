@@ -1,6 +1,6 @@
 {% extends 'post/base.html' %}
 {% block title %}
-{{ profile.user.username }} | Ukiblog
+{{ main_profile.user.username }} | Ukiblog
 {% endblock %}
 {% block categories %}
 {% endblock %}
@@ -8,10 +8,10 @@
 <div class="card" style="width: 800px; margin: 100px 600px 300px 500px; padding: 30px 30px">
     <div class="card-body">
         <span class="text-start fs-1">
-            <img src="{{ profile.avatar_thumbnail.url }}" alt="" width="100" height="100" class="rounded-circle me-2">
-            <a class="ms-2 text-decoration-none">@{{ profile.user.username }}</a>
-            {% if user == profile.user %}
-            <a class="text-decoration-none">
+            <img src="{{ main_profile.avatar_thumbnail.url }}" alt="" width="100" height="100" class="rounded-circle me-2">
+            <a class="ms-2 text-decoration-none">@{{ main_profile.user.username }}</a>
+            {% if user == main_profile.user %}
+            <a href="{% url 'post:edit_profile' slug=main_profile.slug %}" class="text-decoration-none">
                 <button type="button" class="btn btn-outline-primary btn-lg" style="margin-left: 200px">
                     Настройки профиля
                 </button>
@@ -26,28 +26,28 @@
             <tbody>
             <tr>
                 <th scope="row">Настоящее имя</th>
-                {% if profile.user.first_name %}
-                <td>{{ profile.user.first_name }}</td>
+                {% if main_profile.user.first_name %}
+                <td>{{ main_profile.user.first_name }}</td>
                 {% else %}
                 <td>&mdash;</td>
                 {% endif %}
             </tr>
             <tr>
                 <th scope="row">Настоящая фамилия</th>
-                {% if profile.user.last_name %}
-                <td>{{ profile.user.last_name }}</td>
+                {% if main_profile.user.last_name %}
+                <td>{{ main_profile.user.last_name }}</td>
                 {% else %}
                 <td>&mdash;</td>
                 {% endif %}
             </tr>
             <tr>
                 <th scope="row">Email</th>
-                <td>{{ profile.user.email }}</td>
+                <td>{{ main_profile.user.email }}</td>
             </tr>
             <tr>
                 <th scope="row">Статус</th>
                 <td>
-                    {% if profile.author %}
+                    {% if main_profile.author %}
                     Автор
                     {% else %}
                     Читатель
@@ -57,8 +57,8 @@
             </tbody>
         </table>
         <p class="fs-5"><strong class="text-secondary">Информация о пользователе:</strong>
-        {% if profile.bio %}
-        {{ profile.bio }}
+        {% if main_profile.bio %}
+        {{ main_profile.bio }}
         {% else %}
         отсутствует
         {% endif %}
@@ -77,10 +77,10 @@
         </ul>
         {% endfor %}
         {% else %}
-        <p class="text-center fs-3 text-secondary">Вы не опубликовали ни одну статью :(</p>
+        <p class="text-center fs-3 text-secondary">Публикации отсутствуют :(</p>
         {% endif %}
-        {% if user == profile.user %}
-        {% if profile.author %}
+        {% if user == main_profile.user %}
+        {% if main_profile.author %}
         <button type="button" class="btn btn-outline-primary btn-lg mt-5" style="margin-left: 200px">
             <a href="#" class="text-center text-decoration-none text-dark fs-5 mt-3">
                 Опубликовать новую статью

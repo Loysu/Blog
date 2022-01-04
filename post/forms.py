@@ -1,14 +1,12 @@
-import re
-
 from django import forms
 from django.contrib.auth.models import User
-from django.core.validators import EmailValidator
 
 from .validators import LetterUsernameValidator
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(widget=forms.TextInput)
+    """Форма авторизации"""
+    username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
     def __init__(self, *args, **kwargs):
@@ -29,6 +27,7 @@ class LoginForm(forms.Form):
 
 
 class RegistrationForm(forms.ModelForm):
+    """Форма регистрации"""
     username_validator = LetterUsernameValidator()
     username = forms.CharField(
         widget=forms.TextInput,
@@ -72,3 +71,30 @@ class RegistrationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username', 'password', 'confirm_password', 'email', 'first_name', 'last_name')
+
+
+class EditProfileForm(RegistrationForm):
+    """Форма для изменения данных в профиле"""
+    bio = forms.CharField(widget=forms.Textarea, required=False, max_length=300)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        self.fields['bio'].label = 'Краткая информация'
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).exists():
+            if User.objects.get(username=username) != self.user:
+                raise forms.ValidationError(f'Пользователь с логином {username} уже существует.')
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            if User.objects.get(email=email) != self.user:
+                raise forms.ValidationError(f'Email {email} уже используется в системе.')
+        return email
+
+    class Meta(RegistrationForm.Meta):
+        fields = ('username', 'password', 'confirm_password', 'email', 'first_name', 'last_name', 'bio')

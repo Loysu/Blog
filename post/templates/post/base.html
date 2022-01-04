@@ -52,6 +52,7 @@
 
 
 
+
     </style>
     <link href="cover.css" rel="stylesheet">
 </head>
@@ -98,7 +99,7 @@
         {% if messages %}
         <br>
         {% for message in messages %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert"
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert"
              style="margin-left: 450px; width: 900px;">
             <strong>{{ message }}</strong>
         </div>
@@ -126,7 +127,8 @@
             {% for post in posts %}
             <div class="card text-center">
                 <div class="card-header">
-                    <a href="{{ post.author.get_absolute_url }}" class="text-decoration-none text-dark" style="font-weight: 600">
+                    <a href="{{ post.author.get_absolute_url }}" class="text-decoration-none text-dark"
+                       style="font-weight: 600">
                         <img src="{{ post.author.avatar_thumbnail.url }}" alt="" width="32" height="32"
                              class="rounded-circle me-2">{{ post.author.user.username }}
                     </a>
