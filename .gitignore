@@ -2,7 +2,6 @@
 /venv
 /static
 /db.sqlite3
-/Password.docx
 /media
 **/migrations/**
 **/__pycache__/**

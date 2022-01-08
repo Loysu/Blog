@@ -82,7 +82,7 @@
         {% if user == main_profile.user %}
         {% if main_profile.author %}
         <button type="button" class="btn btn-outline-primary btn-lg mt-5" style="margin-left: 200px">
-            <a href="#" class="text-center text-decoration-none text-dark fs-5 mt-3">
+            <a href="{% url 'post:create_post' %}" class="text-center text-decoration-none text-dark fs-5 mt-3">
                 Опубликовать новую статью
             </a>
         </button>

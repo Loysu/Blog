@@ -9,10 +9,9 @@ from imagekit.processors import SmartResize
 class Post(models.Model):
     """Отдельная статья"""
     title = models.CharField(max_length=127, verbose_name='Название', db_index=True, unique=True)
-    description = models.CharField(max_length=511, verbose_name='Описание поста', blank=True)
+    description = models.CharField(max_length=511, verbose_name='Описание поста')
     image_thumbnail = ProcessedImageField(
-        upload_to='pictures',
-        blank=True,
+        upload_to='pictures/',
         processors=[SmartResize(600, 400)],
         format='JPEG',
         options={'quality': 60}
@@ -38,7 +37,7 @@ class Post(models.Model):
         return reverse('post:post_detail', kwargs={'slug': self.slug})
 
     class Meta:
-        ordering = ('-pub_date',)
+        ordering = ('is_published', '-pub_date')
 
 
 class Tag(models.Model):
@@ -67,8 +66,7 @@ class Profile(models.Model):
         upload_to='avatars',
         processors=[SmartResize(300, 300)],
         options={'quality': 60},
-        default='avatars/default-avatar.jpg',
-        blank=True,
+        default='avatars/default-avatar.jpg'
     )
 
     def __str__(self):

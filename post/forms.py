@@ -1,6 +1,12 @@
 from django import forms
 from django.contrib.auth.models import User
 
+from django_summernote.fields import SummernoteTextFormField
+
+from imagekit.forms import ProcessedImageField
+from imagekit.processors import SmartResize
+
+from .models import Post
 from .validators import LetterUsernameValidator
 
 
@@ -98,3 +104,26 @@ class EditProfileForm(RegistrationForm):
 
     class Meta(RegistrationForm.Meta):
         fields = ('username', 'password', 'confirm_password', 'email', 'first_name', 'last_name', 'bio')
+
+
+class CreatePostForm(forms.ModelForm):
+    """Форма для написания поста"""
+    content = SummernoteTextFormField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].label = 'Название'
+        self.fields['description'].label = 'Описание'
+        self.fields['image_thumbnail'].label = 'Изображение'
+        self.fields['tags'].label = 'Теги (категории)'
+        self.fields['content'].label = 'Текст'
+
+    def clean(self):
+        title = self.cleaned_data['title']
+        if Post.objects.filter(title=title).exists():
+            raise forms.ValidationError('Пост с таким названием уже существует')
+
+    class Meta:
+        model = Post
+        fields = ('title', 'description', 'image_thumbnail', 'content', 'tags')
+

@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.text import slugify
 from django.views import View, generic
 from django.contrib.auth import login, authenticate
@@ -9,7 +10,7 @@ from django.forms.models import model_to_dict
 
 from .models import Post, Tag, Profile
 from .mixins import DefaultContextMixin
-from .forms import LoginForm, RegistrationForm, EditProfileForm
+from .forms import LoginForm, RegistrationForm, EditProfileForm, CreatePostForm
 
 
 class BaseView(DefaultContextMixin, generic.ListView):
@@ -165,3 +166,34 @@ class EditProfileView(View):
         }
         return render(self.request, 'post/profile_settings.html', context)
 
+
+class CreatePostView(DefaultContextMixin, generic.CreateView):
+    """Создание поста"""
+    model = Post
+    form_class = CreatePostForm
+    template_name = 'post/create_post.html'
+
+    def get(self, *args, **kwargs):
+        if isinstance(self.request.user, AnonymousUser) or not Profile.objects.get(user=self.request.user).author:
+            messages.warning(self.request, 'У вас недостаточно прав!')
+            return redirect(reverse('post:base'))
+        super().get(*args, **kwargs)
+
+    def form_valid(self, form):
+        post = Post.objects.create(
+            title=form.cleaned_data['title'],
+            slug=slugify(form.cleaned_data['title']),
+            content=form.cleaned_data['content'],
+            author=Profile.objects.get(user=self.request.user),
+            image_thumbnail=form.cleaned_data['image_thumbnail'],
+            description=form.cleaned_data['description'],
+            description_for_search_engines=form.cleaned_data['description'],
+            is_published=False,
+            pub_date=timezone.now(),
+            edit_date=timezone.now(),
+        )
+        post.tags.add(*form.cleaned_data['tags'])
+        return redirect(reverse('post:profile', kwargs={'slug': slugify(self.request.user.username)}))
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(self.request)
