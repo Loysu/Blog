@@ -1,12 +1,12 @@
 {% extends 'post/base.html' %}
 {% block title %}
-{{ post.title }}
+    {{ post.title }}
 {% endblock %}
 {% block description %}
-<meta name="description" content="{{ post.description_for_search_engines }}">
+    {{ post.description_for_search_engines }}
 {% endblock %}
 {% block main %}
-<main class="px-3 text-dark" style="margin-left: 450px; width: 900px;">
+    <main class="px-3 text-dark" style="margin-left: 450px; width: 900px;">
     <div class="card text-center">
         <div class="card-header">
             <a href="#" class="text-decoration-none text-dark" style="font-weight: 600">
@@ -15,26 +15,33 @@
             </a>
             <span class="text-muted">
                         {{ post.pub_date|date:"H:i d.m.Y" }}
-                    {% if post.pub_date != post.edit_date %}
+                {% if post.pub_date != post.edit_date %}
                     (ред.
                     {% if post.pub_date|date:"d.m.Y" == post.edit_date|date:"d.m.Y" %}
-                    в {{ post.edit_date|date:"H:i" }}
+                        в {{ post.edit_date|date:"H:i" }}
                     {% else %}
-                    {{ post.edit_date|date:"H:i d.m.Y" }}
+                        {{ post.edit_date|date:"H:i d.m.Y" }}
                     {% endif %}
                     )
-                    {% endif %}
+                {% endif %}
                     </span>
+            {% if post.author.user == user %}
+                <a href="{% url 'post:edit_post' slug=post.slug %}" class="text-decoration-none">
+                    <button type="button" class="btn btn-outline-primary btn-lg" style="margin-left: 200px">
+                        Редактировать
+                    </button>
+                </a>
+            {% endif %}
         </div>
         <div class="card-body">
             <h2 class="card-title text-dark">
                 {{ post.title }}
             </h2>
-            <img src="{{ post.image_thumbnail.url }}" width=600px style="margin: 15px 0;">
+            <img src="{{ post.image_thumbnail.url }}" width=600px style="margin: 15px 0;" alt="">
             <hr>
             <div class="text-start">
                 {% autoescape off %}
-                <p class="card-text">{{ post.content }}</p>
+                    <p class="card-text">{{ post.content }}</p>
                 {% endautoescape %}
             </div>
         </div>

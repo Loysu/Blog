@@ -1,7 +1,8 @@
+from slugify import slugify
+
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from django.utils.text import slugify
 from django.views import View, generic
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import AnonymousUser, User
@@ -10,7 +11,7 @@ from django.forms.models import model_to_dict
 
 from .models import Post, Tag, Profile
 from .mixins import DefaultContextMixin
-from .forms import LoginForm, RegistrationForm, EditProfileForm, CreatePostForm
+from .forms import LoginForm, RegistrationForm, EditProfileForm, CreatePostForm, EditPostForm
 
 
 class BaseView(DefaultContextMixin, generic.ListView):
@@ -28,7 +29,9 @@ class PostDetailView(DefaultContextMixin, generic.DetailView):
     model = Post
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(self.request, **kwargs)
+        context = super().get_context_data(self.request, **kwargs)
+        context['user'] = self.request.user
+        return context
 
 
 class TagDetailView(DefaultContextMixin, generic.DetailView):
@@ -44,6 +47,7 @@ class TagDetailView(DefaultContextMixin, generic.DetailView):
 
 class LoginView(View):
     """Авторизация"""
+
     def get(self, *args, **kwargs):
         form = LoginForm()
         context = {
@@ -72,6 +76,7 @@ class LoginView(View):
 
 class RegistrationView(View):
     """Регистрация"""
+
     def get(self, *args, **kwargs):
         form = RegistrationForm()
         context = {
@@ -122,6 +127,7 @@ class ProfileView(DefaultContextMixin, generic.DetailView):
 
 class EditProfileView(View):
     """Настройки профиля"""
+
     def get(self, *args, **kwargs):
         if isinstance(self.request.user, AnonymousUser):
             messages.warning(self.request, 'У вас недостаточно прав!')
@@ -168,7 +174,7 @@ class EditProfileView(View):
 
 
 class CreatePostView(DefaultContextMixin, generic.CreateView):
-    """Создание поста"""
+    """Создать пост"""
     model = Post
     form_class = CreatePostForm
     template_name = 'post/create_post.html'
@@ -177,7 +183,7 @@ class CreatePostView(DefaultContextMixin, generic.CreateView):
         if isinstance(self.request.user, AnonymousUser) or not Profile.objects.get(user=self.request.user).author:
             messages.warning(self.request, 'У вас недостаточно прав!')
             return redirect(reverse('post:base'))
-        super().get(*args, **kwargs)
+        return super().get(*args, **kwargs)
 
     def form_valid(self, form):
         post = Post.objects.create(
@@ -193,7 +199,53 @@ class CreatePostView(DefaultContextMixin, generic.CreateView):
             edit_date=timezone.now(),
         )
         post.tags.add(*form.cleaned_data['tags'])
+        messages.success(
+            self.request,
+            f'Ваш пост успешно создан с:\nАдминистрация проверит его и опубликует!'
+        )
         return redirect(reverse('post:profile', kwargs={'slug': slugify(self.request.user.username)}))
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(self.request)
+
+
+class EditPostView(DefaultContextMixin, View):
+    """Редактировать пост"""
+
+    def get(self, *args, **kwargs):
+        if isinstance(self.request.user, AnonymousUser) or Post.objects.get(
+                slug=kwargs['slug']).author.user != self.request.user:
+            messages.warning(self.request, 'У вас недостаточно прав!')
+            return redirect(reverse('post:base'))
+        data = model_to_dict(Post.objects.get(slug=kwargs['slug']))
+        form = EditPostForm(initial=data)
+        context = {
+            'form': form,
+        }
+        context.update(self.get_context_data(self.request, **kwargs))
+        return render(self.request, 'post/edit_post.html', context)
+
+    def post(self, *args, **kwargs):
+        post = Post.objects.get(slug=kwargs['slug'])
+        form = EditPostForm(self.request.POST, self.request.FILES, post=post)
+        if form.is_valid():
+            post.title = form.cleaned_data['title']
+            post.slug = slugify(form.cleaned_data['title'])
+            post.content = form.cleaned_data['content']
+            post.description = form.cleaned_data['description']
+            post.description_for_search_engines = form.cleaned_data['description']
+            post.edit_date = timezone.now()
+            post.tags.add(*form.cleaned_data['tags'])
+            if form.cleaned_data['image_thumbnail']:
+                post.image_thumbnail = form.cleaned_data['image_thumbnail']
+            post.save()
+            messages.success(
+                self.request,
+                f'Ваш пост успешно обновлен с:\nАдминистрация проверит его и опубликует!'
+            )
+            return redirect(reverse('post:profile', kwargs={'slug': slugify(self.request.user.username)}))
+        context = {
+            'form': form,
+        }
+        context.update(self.get_context_data(self.request, **kwargs))
+        return render(self.request, 'post/edit_post.html', context)

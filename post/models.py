@@ -16,7 +16,7 @@ class Post(models.Model):
         format='JPEG',
         options={'quality': 60}
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=127)
     tags = models.ManyToManyField('Tag', verbose_name='Tags')
     author = models.ForeignKey('Profile', verbose_name='Автор', on_delete=models.PROTECT)
     pub_date = models.DateTimeField(auto_now_add=True)

@@ -3,9 +3,6 @@ from django.contrib.auth.models import User
 
 from django_summernote.fields import SummernoteTextFormField
 
-from imagekit.forms import ProcessedImageField
-from imagekit.processors import SmartResize
-
 from .models import Post
 from .validators import LetterUsernameValidator
 
@@ -127,3 +124,17 @@ class CreatePostForm(forms.ModelForm):
         model = Post
         fields = ('title', 'description', 'image_thumbnail', 'content', 'tags')
 
+
+class EditPostForm(CreatePostForm):
+    """Форма для редактирования постов"""
+
+    def __init__(self, *args, **kwargs):
+        self.post = kwargs.pop('post', None)
+        super().__init__(*args, **kwargs)
+        self.fields['image_thumbnail'].required = False
+
+    def clean(self):
+        title = self.cleaned_data['title']
+        if Post.objects.filter(title=title).exists():
+            if Post.objects.get(title=title) != self.post:
+                raise forms.ValidationError('Пост с таким названием уже существует')
