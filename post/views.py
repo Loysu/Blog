@@ -17,6 +17,7 @@ from .forms import LoginForm, RegistrationForm, EditProfileForm, CreatePostForm,
 class BaseView(DefaultContextMixin, generic.ListView):
     """Основная страница"""
     model = Post
+    paginate_by = 3
     template_name = 'post/base.html'
     context_object_name = 'posts'
 
