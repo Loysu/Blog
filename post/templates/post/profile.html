@@ -8,7 +8,13 @@
 <div class="card" style="width: 800px; margin: 0 600px 300px 500px; padding: 30px 30px">
     <div class="card-body">
         <span class="text-start fs-1">
-            <img src="{{ main_profile.avatar_thumbnail.url }}" alt="" width="100" height="100" class="rounded-circle me-2">
+            {% if main_profile.user == user %}
+            <a href="{% url 'post:change_picture' slug=main_profile.slug %}" class="text-decoration-none">
+                <img src="{{ main_profile.avatar_thumbnail.url }}" alt="" width="100" height="100" class="rounded-circle me-2">
+            </a>
+            {% else %}
+                <img src="{{ main_profile.avatar_thumbnail.url }}" alt="" width="100" height="100" class="rounded-circle me-2">
+            {% endif %}
             <a class="ms-2 text-decoration-none">@{{ main_profile.user.username }}</a>
             {% if user == main_profile.user %}
             <a href="{% url 'post:edit_profile' slug=main_profile.slug %}" class="text-decoration-none">

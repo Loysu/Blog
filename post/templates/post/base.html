@@ -154,7 +154,7 @@
                                     <span class="text-primary">#</span>{{ tag.name }}</a>
                             {% endfor %}
                             <br>
-                            <img src="{{ post.image_thumbnail.url }}" width=600px style="margin: 15px 0;">
+                            <img src="{{ post.image_thumbnail.url }}" width=600px style="margin: 15px 0;" alt="">
                             <p class="card-text text-dark">{{ post.description }}</p>
                             <a href="{{ post.get_absolute_url }}" class="btn btn-primary">Читать полностью</a>
                         </div>

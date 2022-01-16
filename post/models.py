@@ -65,8 +65,9 @@ class Profile(models.Model):
     bio = models.CharField(max_length=511, verbose_name='Краткая информация об авторе', blank=True)
     author = models.BooleanField('Автор', default=False)
     avatar_thumbnail = ProcessedImageField(
-        upload_to='avatars',
+        upload_to='avatars/',
         processors=[SmartResize(300, 300)],
+        format='JPEG',
         options={'quality': 60},
         default='avatars/default-avatar.jpg'
     )

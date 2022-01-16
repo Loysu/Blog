@@ -11,7 +11,7 @@ from django.forms.models import model_to_dict
 
 from .models import Post, Tag, Profile
 from .mixins import DefaultContextMixin
-from .forms import LoginForm, RegistrationForm, EditProfileForm, CreatePostForm, EditPostForm
+from .forms import LoginForm, RegistrationForm, EditProfileForm, ChangeProfilePictureForm, CreatePostForm, EditPostForm
 
 from comment.forms import CommentForm
 
@@ -175,6 +175,30 @@ class EditProfileView(View):
             'form': form,
         }
         return render(self.request, 'post/profile_settings.html', context)
+
+
+class ChangeProfilePictureView(generic.UpdateView):
+    """Сменить аватар"""
+    model = Profile
+    form_class = ChangeProfilePictureForm
+    template_name = 'post/change_profile_picture.html'
+
+    def get(self, *args, **kwargs):
+        if isinstance(self.request.user, AnonymousUser) or Profile.objects.get(
+                user=self.request.user) != Profile.objects.get(slug=kwargs['slug']):
+            messages.warning(self.request, 'У вас недостаточно прав!')
+            return redirect(reverse('post:base'))
+        return super().get(*args, **kwargs)
+
+    def form_valid(self, form):
+        profile = form.save(commit=False)
+        profile.avatar_thumbnail = form.cleaned_data['avatar_thumbnail']
+        profile.save(update_fields=('avatar_thumbnail',))
+        messages.success(
+            self.request,
+            f'Аватар успешно обновлен!'
+        )
+        return redirect(reverse('post:profile', kwargs={'slug': self.kwargs['slug']}))
 
 
 class CreatePostView(DefaultContextMixin, generic.CreateView):

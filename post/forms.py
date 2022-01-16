@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 from django_summernote.fields import SummernoteTextFormField
 
-from .models import Post
+from .models import Post, Profile
 from .validators import LetterUsernameValidator
 
 
@@ -101,6 +101,17 @@ class EditProfileForm(RegistrationForm):
 
     class Meta(RegistrationForm.Meta):
         fields = ('username', 'password', 'confirm_password', 'email', 'first_name', 'last_name', 'bio')
+
+
+class ChangeProfilePictureForm(forms.ModelForm):
+    """Форма для смены аватара"""
+
+    class Meta:
+        model = Profile
+        fields = ('avatar_thumbnail',)
+        labels = {
+            'avatar_thumbnail': 'Аватар',
+        }
 
 
 class CreatePostForm(forms.ModelForm):
