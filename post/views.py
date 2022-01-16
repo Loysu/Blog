@@ -13,6 +13,8 @@ from .models import Post, Tag, Profile
 from .mixins import DefaultContextMixin
 from .forms import LoginForm, RegistrationForm, EditProfileForm, CreatePostForm, EditPostForm
 
+from comment.forms import CommentForm
+
 
 class BaseView(DefaultContextMixin, generic.ListView):
     """Основная страница"""
@@ -32,6 +34,7 @@ class PostDetailView(DefaultContextMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(self.request, **kwargs)
         context['user'] = self.request.user
+        context['form'] = CommentForm()
         return context
 
 

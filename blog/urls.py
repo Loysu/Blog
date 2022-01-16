@@ -7,6 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('post.urls')),
     path('summernote/', include('django_summernote.urls')),
+    path('comments/', include('comment.urls', namespace='comments')),
 ]
 
 if settings.DEBUG:
