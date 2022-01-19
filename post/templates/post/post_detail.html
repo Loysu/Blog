@@ -58,16 +58,17 @@
                         {% csrf_token %}
                         {{ form|crispy }}
                         <br>
-                        <input class="btn btn-primary" type="submit" value="Отправить">
+                        <input class="btn btn-primary" type="submit" id="send-comment" value="Отправить">
                     </form>
                 {% else %}
                     <p class="text-center">Оставлять комментарии могут только авторизованные пользователи</p>
                 {% endif %}
                 <hr>
-                <div class="row">
+                <div class="row" id="comments-list">
                     {% for comment in post.comments.all %}
                         <div class="col-md-12 mt-3 mb-3">
-                            <p><a href="{{ comment.author.get_absolute_url }}" class="text-decoration-none text-dark" style="font-weight: 600">
+                            <p><a href="{{ comment.author.get_absolute_url }}" class="text-decoration-none text-dark"
+                                  style="font-weight: 600">
                                 <img src="{{ comment.author.avatar_thumbnail.url }}" alt="" width="32" height="32"
                                      class="rounded-circle me-2">{{ comment.author.user.username }}
                             </a>|
@@ -82,4 +83,37 @@
         </div>
     </div>
 {% endblock %}
+{% block js %}
+    <script>
+        const commentsSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/post_detail/'
+            + "{{ post.id }}"
+            + '/'
+        );
+        commentsSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            commentsList = document.getElementById('comments-list')
+            commentsList.insertAdjacentHTML(
+                'beforeend',
+                '<div class="col-md-12 mt-3 mb-3">\n' +
+                '<p><strong>' + data['message']['author'] + '</strong> | <small>опубликовано:' + data['message']['created_at'] + '</small></p>\n' +
+                '<p>' + data['message']['text'] + '</p>\n' +
+                '</div>'
+            )
+        };
+        document.querySelector('#send-comment').onclick = function (e) {
+            e.preventDefault()
+            const messageInputDom = document.querySelector('#id_text');
+            const text = messageInputDom.value;
+            commentsSocket.send(JSON.stringify({
+                'text': text
+            }));
+            messageInputDom.value = '';
+        };
+
+    </script>
+{% endblock js %}
+
 </main>
