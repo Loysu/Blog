@@ -1,0 +1,8 @@
+django==3.2.6
+django-imagekit==4.1.0
+django-summernote==0.8.20.0
+django-crispy-forms==1.14.0
+channels==3.0.4
+channels-redis==3.4.0
+python-slugify==6.1.2
+Pillow==9.1.1
