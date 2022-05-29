@@ -10,7 +10,7 @@ Site with articles on all topics
    - `docker-compose up --build`
 4. Go into container:
    - `docker exec -it <Container Name> bash`
-5. For creating migrations run following command: 
+5. For creating migrations run following command:
    - `python manage.py makemigrations`
 6. To create an admin - `python manage.py createsuperuser`;
 7. Run server - `python manage.py runserver`;
@@ -21,7 +21,7 @@ Site with articles on all topics
 - At "http://127.0.0.1:8000/admin" located the admin page
 - For creating a profile of user go to "Profiles" on the left side of the screen
 - For creating a tag (category) for posts go to "Tags"
-- For creating a post (article) go to "Posts" 
+- For creating a post (article) go to "Posts"
 - For manage users rights you can go to "Users" and "Groups"
 
 ## Usage
